@@ -34,7 +34,8 @@ class Store:
             self.store_id = store_id
             self.param_page_size = param_page_size
             self.param_types = param_types
-            self.rest_url = "https://platform-rest-prod.ngdata.no/api/episearch/{}/autosuggest".format(self.store_id)
+            self.rest_url = "https://platform-rest-prod.ngdata.no/api/episearch/{}/autosuggest".format(
+                self.store_id)
             self.session = requests.Session()
             self.token = None
             self.params = None
@@ -66,7 +67,8 @@ class Store:
     def fetch_json(self, search) -> dict:
         self.refresh_token()
         self.set_params(search)
-        r = self.session.get(self.rest_url, headers=self.headers, params=self.params)
+        r = self.session.get(
+            self.rest_url, headers=self.headers, params=self.params)
         if r.status_code == 200:
             return json.loads(r.text)
         else:
@@ -78,7 +80,7 @@ class Store:
 
     def refresh_token(self):
         self.session.get(self.id_dict_url[self.store_id])
-        self.token = self.session.cookies.get_dict()["_app_token_"]
+        self.token = self.session.cookies.get_dict()["__RequestVerificationToken"]
         self.headers = {'x-csrf-token': self.token}
 
     def set_params(self, search):
@@ -127,7 +129,7 @@ class Product:
         return self.fetch_products_content(index)["_id"]
 
     def get_unit_weight(self, index=0) -> float:
-        return self.store.fetch_products_content_source(self.search, index)["unitWeight"]
+        return self.fetch_product_source(index)["unitWeight"]
 
     def get_shopping_list_group_name(self, index=0) -> str:
         return self.fetch_product_source(index)["shoppingListGroupName"]
